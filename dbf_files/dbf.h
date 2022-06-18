@@ -1,6 +1,9 @@
 #ifndef DBF_H_INCLUDED
 #define DBF_H_INCLUDED
 
+#include <stdio.h>
+
+
 /*
 # Estructuras dentro del archivo DBF
 ## DBF File Header
@@ -85,7 +88,7 @@ Si el formato en dBaseIII tiene los iguientes limites
 
 /*
   La etrucura stDBF_DescritorFile nos da la informacion
-  general del archivo para poder leerlo,
+  general del a1rchivo para poder leerlo,
 */
 typedef struct{
   unsigned char DBFType; // 1 byte
@@ -121,6 +124,18 @@ typedef struct {
    char Reserved[8];               //24-31 24.25.26.27.28.29.30.31: 8 byte
 }stDBFSubRecord;
 
+/*
+  Esta estructura es de uso interno y simplifica el tener muchas variables colgadas 
+*/
+typedef struct{
+  FILE *fp;                       // Puntero al archiv abierto.
+  short CominzoDatos;             // Commienzo de los datos en el archivo
+  short LongitudRecord;           // Longitudde cada regstro cokmleto.
+  unsigned short  CampoXRegistro;  // Cantidad de campos que tiene cada resgistro.
+  unsigned long   TamanoDescripcionReg; 
+  unsigned short  celdasXRegistro;
+  stDBFSubRecord  *ptTCedasRegistro;
+}stDescriptor;
 
 // Prototipos
 

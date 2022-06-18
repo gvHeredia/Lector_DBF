@@ -19,6 +19,11 @@
       -[] Crear archivo para crear la misma tabla en sql.
       -[] Crear arcivo que genere una injeccion de los datos en SQL(Ajonco los tamanos).
 */
+// dDecñaracionde  variables locales al modulo
+
+// stDescriptor
+
+
 
 //La funcion PrintDBFDescriptorFile imprime los capos del encabezado del archivo para informarlos**/
 void PrintDBFDescriptorFile(stDBF_DescritorFile DBFDescriptor)
@@ -97,23 +102,88 @@ void PrintSubRecordInfo(stDBFSubRecord Subrecord)
   printf("\n\tPaso de incre:\t%x",Subrecord.AutoIncStep );
 }
 
-//Abrimos el archivo y guardamos la informacion encesaria para liberarla cunado cerramos todo
-// Al abrir un archivo debo generar un resumen until de la informacion del mismo para realizar todas las operaciones
-// El problema es que debo tener en memoria el formato de para interpretar cada campo del registro
+/*
+  Abrimos el archivo y carmos la informacion necesaria para realizar las operaciones que se nos pidan
+  dentro del archivo y luego poder cerarlo cuanod ya no se use mas (analizar co cuidado que memoria y
+  cuando liberarla.
+  Al abrir un archivo debo generar un resumen de la informacion del mismo para realizar todas las operaciones
+  El problema es que debo tener en memoria el formato de cada campo para interpretarlos cuando pidan
+  informacion de o los registros.
+  Segun como salio todo retornamos un codigo de error para saber como salio todo.
+  * 0 Si todo sale bien
+  * -1 si se quedo sin memoria.
+*/
+char DBFOpen(stDescriptor Descriptor, char* Nombre)
+{
+  FILE * pFile;
+  int i, NumeroCeldas;
+  long  lSize,
+        LRegisterSize;    // LRegisterSize es el tamano de cada registro(entrada) de la tabla.
+  char * buffer, *RegisterBuf ;
+  size_t result;
+  stDBF_DescritorFile DBFBuf;
+  stDBFSubRecord *ptrSubrecord;
 
-stDBF_DescritorFile DBFOpen(char*)
+  //pFile = fopen ( Nombre , "rb" );
+  Descriptor.fp = fopen ( Nombre , "rb" );
+  // verifico si se puede abrir el archivo sino error!!!
+//  if (pFile==NULL)
+  if (Descriptor.fp == NULL)
+    return (1);//{fputs ("File error",stderr); exit (1);}
+
+  // OK entonces salvo el file poiter
+  //Descriptor.fp = pFile;
+/*
+  // Obtenemos el tamano del archivo. para que??
+  fseek (Descriptor.fp , 0 , SEEK_END);
+  lSize = ftell (Descriptor.fp);
+  rewind (Descriptor.fp);
+*/
+
+  //Leemos el encabezado del archivo y lo guardamos en la estructura
+  result = fread (&DBFBuf,1,sizeof(stDBF_DescritorFile), Descriptor.fp);
+  if (result != sizeof(stDBF_DescritorFile))
+    return (2); //  {fputs ("Reading error",stderr); exit (2);}
+{
+  // Reservo memoria para obtener todos los SubRecords.
+  //lSize = DBFBuf.PostFisrtDataRecord ;
+  //lSize = lSize - 2 -32;  // 2 byte se deben al 0x0d y al 0x00 que estan
+                          // al final del registro
+  Descriptor.TamanoDescripcionReg = DBFBuf.PostFisrtDataRecord - (2+32);
+  Descriptor.CominzoDatos = DBFBuf.PostFisrtDataRecord;
+
+  buffer = (char*) malloc (sizeof(char)*lSize);
+  if (buffer == NULL)
+    return (-1); // {fputs ("Memory error",stderr); exit (3);}
+
+  // Reservo memoria para leer la descripcion de los subregistros.
+  result = fread (buffer,lSize,1,  Descriptor.fp);
+  ptrSubrecord = (stDBFSubRecord*)buffer;
+  Descriptor.ptTCedasRegistro = (stDBFSubRecord*)buffer;
+}
+
+  //NumeroCeldas = lSize/sizeof(stDBFSubRecord);
+  Descriptor.CampoXRegistro = Descriptor.TamanoDescripcionReg/sizeof(stDBFSubRecord);
+
+  return (0);
+}
+
+
+// Para poder leer un registro tengo que tener el largo del registro, esto lo obtrengo de la estructura del
+// archivo que me da el largo de cada registro, luego necesito la posicicon done empieza el regirto, lo que
+// es facil ya que es N veces el tamano mas el offset de arranque de la seccion delntro del archivo.
+
+
+char ReadRecordByNum(stDescriptor trabajo, unsigned int Index)
 {
 
 }
 
-ReadRecordByNum(unsigned int Index)
+
+
+char DBFClose(stDescriptor Descriptor)
 {
-
-}
-
-char DBFClose(char*)
-{
-
+  return 0;
 }
 
 

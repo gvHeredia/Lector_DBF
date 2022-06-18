@@ -18,8 +18,8 @@ int main()
 //  FILE *fp;
   FILE * pFile;
   int i, NumeroCeldas;
-  long lSize,
-    LRegisterSize;    // LRegisterSize es el tamano de cada registro(entrada) de la tabla.
+  long  lSize,
+        LRegisterSize;    // LRegisterSize es el tamano de cada registro(entrada) de la tabla.
   char * buffer, *RegisterBuf ;
   size_t result;
   stDBF_DescritorFile DBFBuf;
@@ -78,9 +78,9 @@ int main()
 
 
 
-lSize = ftell (pFile);
+  lSize = ftell (pFile);
   fseek(pFile, DBFBuf.PostFisrtDataRecord, SEEK_SET);
-lSize = ftell (pFile);
+  lSize = ftell (pFile);
 
   RegisterBuf = (char*) malloc (sizeof(char)*LRegisterSize*MULTIPLO);
   if (RegisterBuf == NULL) {fputs ("Memory error",stderr); exit (3);}
@@ -108,7 +108,7 @@ lSize = ftell (pFile);
 
 
 
-  printf("Hello world!\n");
+  printf("\n Fin de lectura del archivo DBF!\n");
 
   return 0;
 }
