@@ -113,7 +113,7 @@ void PrintSubRecordInfo(stDBFSubRecord Subrecord)
   * 0 Si todo sale bien
   * -1 si se quedo sin memoria.
 */
-char DBFOpen(stDescriptor Descriptor, char* Nombre)
+char DBFOpen(stDescriptor* Descriptor, char* Nombre)
 {
   FILE * pFile;
   int i, NumeroCeldas;
@@ -124,11 +124,20 @@ char DBFOpen(stDescriptor Descriptor, char* Nombre)
   stDBF_DescritorFile DBFBuf;
   stDBFSubRecord *ptrSubrecord;
 
+/*
+  iniicilaizo los datos de la estructura pero tambien debo deteccta si fu usada antes para no
+  perder los punteros d la memoria que esta reservada.
+*/
+  Descriptor->CampoXRegistro = 0; ///?????
+  Descriptor->CeldasXRegistro =0 ;
+  Descriptor->ptrDescriptor = NULL;
+  Descriptor->ptTCedasRegistro = NULL;
+
   //pFile = fopen ( Nombre , "rb" );
-  Descriptor.fp = fopen ( Nombre , "rb" );
+  Descriptor->fp = fopen ( Nombre , "rb" );
   // verifico si se puede abrir el archivo sino error!!!
 //  if (pFile==NULL)
-  if (Descriptor.fp == NULL)
+  if (Descriptor->fp == NULL)
     return (1);//{fputs ("File error",stderr); exit (1);}
 
   // OK entonces salvo el file poiter
@@ -141,7 +150,7 @@ char DBFOpen(stDescriptor Descriptor, char* Nombre)
 */
 
   //Leemos el encabezado del archivo y lo guardamos en la estructura
-  result = fread (&DBFBuf,1,sizeof(stDBF_DescritorFile), Descriptor.fp);
+  result = fread (&DBFBuf,1,sizeof(stDBF_DescritorFile), Descriptor->fp);
   if (result != sizeof(stDBF_DescritorFile))
     return (2); //  {fputs ("Reading error",stderr); exit (2);}
 {
@@ -149,21 +158,22 @@ char DBFOpen(stDescriptor Descriptor, char* Nombre)
   //lSize = DBFBuf.PostFisrtDataRecord ;
   //lSize = lSize - 2 -32;  // 2 byte se deben al 0x0d y al 0x00 que estan
                           // al final del registro
-  Descriptor.TamanoDescripcionReg = DBFBuf.PostFisrtDataRecord - (2+32);
-  Descriptor.CominzoDatos = DBFBuf.PostFisrtDataRecord;
+  Descriptor->TamanoDescripcionReg = (DBFBuf.PostFisrtDataRecord) - 2-32;
+  Descriptor->CominzoDatos = DBFBuf.PostFisrtDataRecord;
 
-  buffer = (char*) malloc (sizeof(char)*lSize);
+//  buffer = (char*) malloc (sizeof(char)*lSize);
+  buffer = (char*) malloc (sizeof(char)*(Descriptor->TamanoDescripcionReg));
   if (buffer == NULL)
     return (-1); // {fputs ("Memory error",stderr); exit (3);}
 
   // Reservo memoria para leer la descripcion de los subregistros.
-  result = fread (buffer,lSize,1,  Descriptor.fp);
+  result = fread (buffer,lSize,1,  Descriptor->fp);
   ptrSubrecord = (stDBFSubRecord*)buffer;
-  Descriptor.ptTCedasRegistro = (stDBFSubRecord*)buffer;
+  Descriptor->ptTCedasRegistro = (stDBFSubRecord*)buffer;
 }
 
   //NumeroCeldas = lSize/sizeof(stDBFSubRecord);
-  Descriptor.CampoXRegistro = Descriptor.TamanoDescripcionReg/sizeof(stDBFSubRecord);
+  Descriptor->CampoXRegistro = (Descriptor->TamanoDescripcionReg)/sizeof(stDBFSubRecord);
 
   return (0);
 }
@@ -174,7 +184,7 @@ char DBFOpen(stDescriptor Descriptor, char* Nombre)
 // es facil ya que es N veces el tamano mas el offset de arranque de la seccion delntro del archivo.
 
 
-char ReadRecordByNum(stDescriptor trabajo, unsigned int Index)
+char ReadRecordByNum(stDescriptor Descriptor, unsigned int Index)
 {
 
 }
@@ -183,6 +193,13 @@ char ReadRecordByNum(stDescriptor trabajo, unsigned int Index)
 
 char DBFClose(stDescriptor Descriptor)
 {
+
+  //Descriptor.ptTCedasRegistro;
+  //Descriptor.ptTCedasRegistro;
+  fclose (Descriptor.fp);
+  free (Descriptor.ptrDescriptor); // Liberamos la memoria
+  free(Descriptor.ptTCedasRegistro );
+
   return 0;
 }
 

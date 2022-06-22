@@ -128,19 +128,24 @@ typedef struct {
   Esta estructura es de uso interno y simplifica el tener muchas variables colgadas 
 */
 typedef struct{
-  FILE *fp;                       // Puntero al archiv abierto.
+  FILE *fp;                       // Puntero al archivo abierto.
   short CominzoDatos;             // Commienzo de los datos en el archivo
-  short LongitudRecord;           // Longitudde cada regstro cokmleto.
+  short LongitudRegistro;           // Longitudde cada regstro cokmleto.
   unsigned short  CampoXRegistro;  // Cantidad de campos que tiene cada resgistro.
-  unsigned long   TamanoDescripcionReg; 
-  unsigned short  celdasXRegistro;
+  unsigned short   TamanoDescripcionReg; // bloque completo de estructuras de cada celda
+  unsigned short  CeldasXRegistro;
   stDBFSubRecord  *ptTCedasRegistro;
+  stDBF_DescritorFile *ptrDescriptor;
 }stDescriptor;
 
 // Prototipos
+char DBFOpen(stDescriptor *Descriptor, char* Nombre);
+char DBFClose(stDescriptor Descriptor);
+char ReadRecordByNum(stDescriptor Descriptor, unsigned int Index);
 
-void PrintDBFDescriptorFile(stDBF_DescritorFile DBFDescriptor);
-char* GetFieldTypeDescription(char FieldType);
-void PrintSubRecordInfo(stDBFSubRecord Subrecord);
+char* GetFieldTypeDescription(char FieldType); // funcion auxiliar para interpretar
+void PrintDBFDescriptorFile(stDBF_DescritorFile DBFDescriptor); // realiza una impresion de la estructura del archivo
+void PrintSubRecordInfo(stDBFSubRecord Subrecord); //Imprime toda la informacion de cada campo que forman el registro de la .base
+
 
 #endif // DBF_H_INCLUDED
