@@ -1,7 +1,12 @@
 /*
  *
  *  Autor: Gabriel Vasquez H.
-
+ *  Objetivo:
+ *    Este projecto nace a raiz de una nececida en mi trabajo de poder trabajar con
+ *    sitemas que tiene esta base de datos en maquinas viejas de pocos recursos.
+ *    A si que mientras desarrollo una herramienta, me parecio poder hacer algo
+ *    sensillo para no olvidarme la estructura y dejar para que otros vena un ejemplo
+ *
  *
 */
 
@@ -82,19 +87,21 @@ int main()
 
   printf("\nImprimimos el concepto de cada celda del registro");
   LRegisterSize =0;
-  for(i=0; i< NumeroCeldas ;i++){
-    printf("\n %s", ptrSubrecord[i].FieldName);
-    LRegisterSize += ptrSubrecord[i].LengthFiel; // utilizo para contar el tamano total de cada entrada de la tabla
+//  for(i=0; i< NumeroCeldas ;i++){
+  for(i=0; i< Descriptor.CampoXRegistro ;i++){
+    printf("\n %s", Descriptor.ptTCedasRegistro[i].FieldName);
+    LRegisterSize += Descriptor.ptTCedasRegistro[i].LengthFiel; // utilizo para contar el tamano total de cada entrada de la tabla
+//    printf("\n %s", ptrSubrecord[i].FieldName);
+//    LRegisterSize += ptrSubrecord[i].LengthFiel; // utilizo para contar el tamano total de cada entrada de la tabla
   }
   /* the whole file is now loaded in the memory buffer. */
   //PrintDBFDescriptorFile(DBFBuf);
-  PrintDBFDescriptorFile( *(Descriptor.ptrDescriptor));
+  PrintDBFDescriptorFile( Descriptor.Descriptor );
   printf("\n Longitud de cada registro(calc sum) es:%d",(int)LRegisterSize);
   printf("\n descripcion de cada celda del registro:");
 
-
-
-  for(i=0; i< NumeroCeldas ;i++)
+//  for(i=0; i< NumeroCeldas ;i++)
+  for(i=0; i< Descriptor.CampoXRegistro ;i++)
   {
     //printf("\n %s", ptrSubrecord[i].FieldName);
     //PrintSubRecordInfo(ptrSubrecord[i]);
@@ -107,6 +114,8 @@ int main()
   // nos posiscionamos donde empiezan los registros.
 
 
+//aun no arreglado
+/*
   lSize = ftell (pFile);
   fseek(pFile, DBFBuf.PostFisrtDataRecord, SEEK_SET);
   lSize = ftell (pFile);
@@ -116,8 +125,15 @@ int main()
 
   result = fread (RegisterBuf ,1,LRegisterSize*MULTIPLO, pFile);
   if (result != LRegisterSize*MULTIPLO) {fputs ("Reading error",stderr); exit (2);}
+*/
+  if(ReadRecordByNum(1, &Descriptor, &RegisterBuf) )
+  { exit (3);} // ndebe ser un switch
+
+
+
   printf("\n0 1 2 3 4 5 6 7 8 9 A B C D E F\n");
-  for(i=0;i<LRegisterSize*MULTIPLO;i++ ){
+//  for(i=0;i<LRegisterSize*MULTIPLO;i++ ){
+  for(i=0;i<Descriptor.LongitudRegistro;i++ ){
     printf("%c ",RegisterBuf[i]);
     if((i%16==0) && (i>0))
       printf("\n");
@@ -127,6 +143,7 @@ int main()
       printf("\n0 1 2 3 4 5 6 7 8 9 A B C D E F\n");
     }
   }
+  free(RegisterBuf);
 /*
   // ya termien entonces libero la memoria que pedi.
   fclose (pFile);

@@ -2,7 +2,7 @@
 #define DBF_H_INCLUDED
 
 #include <stdio.h>
-
+#include <stdlib.h>
 
 /*
 # Estructuras dentro del archivo DBF
@@ -125,7 +125,7 @@ typedef struct {
 }stDBFSubRecord;
 
 /*
-  Esta estructura es de uso interno y simplifica el tener muchas variables colgadas 
+  Esta estructura es de uso interno y simplifica el tener muchas variables colgadas
 */
 typedef struct{
   FILE *fp;                       // Puntero al archivo abierto.
@@ -135,13 +135,14 @@ typedef struct{
   unsigned short   TamanoDescripcionReg; // bloque completo de estructuras de cada celda
   unsigned short  CeldasXRegistro;
   stDBFSubRecord  *ptTCedasRegistro;
-  stDBF_DescritorFile *ptrDescriptor;
+  stDBF_DescritorFile Descriptor;//*ptrDescriptor;
 }stDescriptor;
 
 // Prototipos
 char DBFOpen(stDescriptor *Descriptor, char* Nombre);
 char DBFClose(stDescriptor Descriptor);
-char ReadRecordByNum(stDescriptor Descriptor, unsigned int Index);
+char ReadRecordByNum(unsigned int Index, stDescriptor* Descriptor, char* RegisterBuf);
+//char ReadRecordByNum(stDescriptor Descriptor, unsigned int Index);
 
 char* GetFieldTypeDescription(char FieldType); // funcion auxiliar para interpretar
 void PrintDBFDescriptorFile(stDBF_DescritorFile DBFDescriptor); // realiza una impresion de la estructura del archivo

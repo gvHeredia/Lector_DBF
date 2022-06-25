@@ -10,12 +10,12 @@
 /*
   TODO:
   * Etapa 1
-      -[] Funcion que me de la cantidad total de resgistros
-      -[] Agregar funciones que me permitar leer de a un registro a la vez
-      -[] Leer de a un registro por vez en cualquier posicion, pero indexado.
-      -[] Imprimir los datos del registro completo.
+      -[x] Funcion que me de la cantidad total de resgistros
+      -[x] Agregar funciones que me permitar leer de a un registro a la vez
+      -[x] Leer de a un registro por vez en cualquier posicion, pero indexado.
+      -[x] Imprimir los datos del registro completo.
   * Etapa 2
-      -[] Crear esportacion a un archivo cvs.
+      -[] Crear exportacion a un archivo cvs.
       -[] Crear archivo para crear la misma tabla en sql.
       -[] Crear arcivo que genere una injeccion de los datos en SQL(Ajonco los tamanos).
 */
@@ -130,7 +130,7 @@ char DBFOpen(stDescriptor* Descriptor, char* Nombre)
 */
   Descriptor->CampoXRegistro = 0; ///?????
   Descriptor->CeldasXRegistro =0 ;
-  Descriptor->ptrDescriptor = NULL;
+//  Descriptor->ptrDescriptor = NULL;
   Descriptor->ptTCedasRegistro = NULL;
 
   //pFile = fopen ( Nombre , "rb" );
@@ -158,11 +158,15 @@ char DBFOpen(stDescriptor* Descriptor, char* Nombre)
   //lSize = DBFBuf.PostFisrtDataRecord ;
   //lSize = lSize - 2 -32;  // 2 byte se deben al 0x0d y al 0x00 que estan
                           // al final del registro
-  Descriptor->TamanoDescripcionReg = (DBFBuf.PostFisrtDataRecord) - 2-32;
+  memcpy(&(Descriptor->Descriptor),&DBFBuf, sizeof(stDBF_DescritorFile));
+  Descriptor->TamanoDescripcionReg = (DBFBuf.PostFisrtDataRecord) - 2-sizeof(stDBF_DescritorFile);//32;
+  printf("\nByte de subregistro %d", Descriptor->TamanoDescripcionReg);
   Descriptor->CominzoDatos = DBFBuf.PostFisrtDataRecord;
+  Descriptor->LongitudRegistro = DBFBuf.LengthDataRecord;
 
 //  buffer = (char*) malloc (sizeof(char)*lSize);
-  buffer = (char*) malloc (sizeof(char)*(Descriptor->TamanoDescripcionReg));
+  lSize = sizeof(char)*(Descriptor->TamanoDescripcionReg);
+  buffer = (char*) malloc (lSize);
   if (buffer == NULL)
     return (-1); // {fputs ("Memory error",stderr); exit (3);}
 
@@ -183,12 +187,30 @@ char DBFOpen(stDescriptor* Descriptor, char* Nombre)
 // archivo que me da el largo de cada registro, luego necesito la posicicon done empieza el regirto, lo que
 // es facil ya que es N veces el tamano mas el offset de arranque de la seccion delntro del archivo.
 
+char ReadRecordByNum(unsigned int Index, stDescriptor* Descriptor, char** RegisterBuf)
+{
+  size_t result;
+  // Posiciono el filepointer donde comienzan los datos
+//  fseek(pFile, DBFBuf.PostFisrtDataRecord, SEEK_SET);
+  fseek(Descriptor->fp, Descriptor->CominzoDatos, SEEK_SET);
 
-char ReadRecordByNum(stDescriptor Descriptor, unsigned int Index)
+  //RegisterBuf = (char*) malloc (sizeof(char)*LRegisterSize*MULTIPLO);
+  *RegisterBuf = (char*) malloc (sizeof(char)*(Descriptor->LongitudRegistro));
+//  if (RegisterBuf == NULL) {fputs ("Memory error",stderr); exit (3);}
+  if (RegisterBuf == NULL) {return (3);}
+
+//  result = fread (RegisterBuf ,1,LRegisterSize*MULTIPLO, pFile);
+  result = fread (*RegisterBuf ,1,Descriptor->LongitudRegistro, Descriptor->fp);
+//  if (result != LRegisterSize*MULTIPLO) {fputs ("Reading error",stderr); exit (2);}
+//  if (result != LRegisterSize) {fputs ("Reading error",stderr); exit (2);}
+  if (result != Descriptor->LongitudRegistro) {return(2);}
+ return(0);
+}
+
+char ReadRecordRange(stDescriptor* Descriptor, unsigned int Index)
 {
 
 }
-
 
 
 char DBFClose(stDescriptor Descriptor)
@@ -196,8 +218,8 @@ char DBFClose(stDescriptor Descriptor)
 
   //Descriptor.ptTCedasRegistro;
   //Descriptor.ptTCedasRegistro;
-  fclose (Descriptor.fp);
-  free (Descriptor.ptrDescriptor); // Liberamos la memoria
+  //fclose (Descriptor.fp);
+  //free (Descriptor.ptrDescriptor); // Liberamos la memoria
   free(Descriptor.ptTCedasRegistro );
 
   return 0;
