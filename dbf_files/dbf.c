@@ -10,7 +10,7 @@
 /*
   TODO:
   * Etapa 1
-      -[x] Funcion que me de la cantidad total de resgistros
+      -[] Funcion que me de la cantidad total de resgistros
       -[x] Agregar funciones que me permitar leer de a un registro a la vez
       -[x] Leer de a un registro por vez en cualquier posicion, pero indexado.
       -[x] Imprimir los datos del registro completo.
@@ -182,16 +182,27 @@ char DBFOpen(stDescriptor* Descriptor, char* Nombre)
   return (0);
 }
 
-
-// Para poder leer un registro tengo que tener el largo del registro, esto lo obtrengo de la estructura del
-// archivo que me da el largo de cada registro, luego necesito la posicicon done empieza el regirto, lo que
-// es facil ya que es N veces el tamano mas el offset de arranque de la seccion delntro del archivo.
+/**
+ * @brief 
+ *       Para poder leer un registro tengo que tener el largo del registro, esto lo obtrengo de la estructura del
+ *       archivo que me da el largo de cada registro, luego necesito la posicicon done empieza el regirto, lo que
+ *       es facil ya que es N veces el tamano mas el offset de arranque de la seccion delntro del archivo.
+ * @param Index 
+ *  Numero de resguidstro de deseamos leer.
+ * @param Descriptor 
+ *  Puntero al descripto utilizado para llevar la informacion del archivo leido.
+ * @param RegisterBuf 
+ *  Puntero al buffer donde se guardaran los datos leidos.
+ * @return char 
+ */
 
 char ReadRecordByNum(unsigned int Index, stDescriptor* Descriptor, char** RegisterBuf)
 {
   size_t result;
   // Posiciono el filepointer donde comienzan los datos
 //  fseek(pFile, DBFBuf.PostFisrtDataRecord, SEEK_SET);
+// TODO:  Falta hacer todas las validacione.
+
   fseek(Descriptor->fp, Descriptor->CominzoDatos, SEEK_SET);
 
   //RegisterBuf = (char*) malloc (sizeof(char)*LRegisterSize*MULTIPLO);
@@ -207,8 +218,38 @@ char ReadRecordByNum(unsigned int Index, stDescriptor* Descriptor, char** Regist
  return(0);
 }
 
-char ReadRecordRange(stDescriptor* Descriptor, unsigned int Index)
+
+/**
+ * @brief Esta fucnion nos permite leer varios registros de una vez 
+ * a fucnion retorna la cantidad de registros que pudo leer, si o pudo leer ningun registro retorna 0 
+ * y en caso que se produsca un error retorna numeros negativos.
+ * 
+ */
+
+char ReadRecordRange(unsigned int StartIdx, unsigned int EndIdx, stDescriptor* Descriptor, char** RegisterBuf)
 {
+  size_t result;
+  unsigned int FileOffset, BufferSize;
+  //Primer debemos validar el rango solicitado ya sea que no esten cruzados como que esten dnentro de la cantidad 
+  // de registros gaurdados
+  if(StartIdx <= EndIdx)  
+    return -1;                            // Rango invalido
+  if(RegisterBuf == NULL)  
+    return -4;                           // Destino invalido
+ // TODO Validar con a cantidad de reistros almacenados.
+  // Posiciono el filepointer donde comienzan los datos
+  FileOffset = Descriptor->CominzoDatos + (StartIdx * sizeof(char)*(Descriptor->LongitudRegistro)) ;
+  fseek(Descriptor->fp, FileOffset, SEEK_SET);                  // posciono el puntero del archivo en el registro que deseo leer
+  BufferSize = sizeof(char)*(Descriptor->LongitudRegistro);     // Calculo cuanta memoria voy a necesitar para guardar los datos que pidio leer
+ 
+  *RegisterBuf = (char*) malloc ( BufferSize);
+  if (RegisterBuf == NULL) 
+    return (-3);
+
+  result = fread (*RegisterBuf ,1,Descriptor->LongitudRegistro, Descriptor->fp);
+  if (result != Descriptor->LongitudRegistro) 
+    return(-2);
+ return(0);
 
 }
 
@@ -218,10 +259,11 @@ char DBFClose(stDescriptor Descriptor)
 
   //Descriptor.ptTCedasRegistro;
   //Descriptor.ptTCedasRegistro;
-  //fclose (Descriptor.fp);
+  if(Descriptor.fp != NULL)
+    fclose (Descriptor.fp);
   //free (Descriptor.ptrDescriptor); // Liberamos la memoria
-  free(Descriptor.ptTCedasRegistro );
-
+  if(Descriptor.ptTCedasRegistro != NULL)
+    free(Descriptor.ptTCedasRegistro );
   return 0;
 }
 

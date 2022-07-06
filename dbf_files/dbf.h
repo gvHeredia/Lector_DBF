@@ -141,7 +141,7 @@ typedef struct{
 // Prototipos
 char DBFOpen(stDescriptor *Descriptor, char* Nombre);
 char DBFClose(stDescriptor Descriptor);
-char ReadRecordByNum(unsigned int Index, stDescriptor* Descriptor, char* RegisterBuf);
+char ReadRecordByNum(unsigned int Index, stDescriptor* Descriptor, char** RegisterBuf);
 //char ReadRecordByNum(stDescriptor Descriptor, unsigned int Index);
 
 char* GetFieldTypeDescription(char FieldType); // funcion auxiliar para interpretar
