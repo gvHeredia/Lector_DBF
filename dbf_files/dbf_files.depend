@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1656035001 source:d:\__tools\dbf_files\main.c
+	<stdio.h>
+	<stdlib.h>
+	"dbf.h"
+
+1656128500 d:\__tools\dbf_files\dbf.h
+	<stdio.h>
+	<stdlib.h>
+
+1656254784 source:d:\__tools\dbf_files\dbf.c
+	"dbf.h"
+
