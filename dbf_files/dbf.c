@@ -10,7 +10,7 @@
 /*
   TODO:
   * Etapa 1
-      -[] Funcion que me de la cantidad total de resgistros
+      -[ ] Funcion que me de la cantidad total de resgistros
       -[x] Agregar funciones que me permitar leer de a un registro a la vez
       -[x] Leer de a un registro por vez en cualquier posicion, pero indexado.
       -[x] Imprimir los datos del registro completo.
