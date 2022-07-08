@@ -17,9 +17,9 @@
   * Etapa 2
       -[] Crear exportacion a un archivo cvs.
       -[] Crear archivo para crear la misma tabla en sql.
-      -[] Crear arcivo que genere una injeccion de los datos en SQL(Ajonco los tamanos).
+      -[] Crear arcivo que genere la injeccion de los datos en SQL(Ojo con los tamanos).
 */
-// dDecñaracionde  variables locales al modulo
+// Declaracionde  variables locales al modulo
 
 // stDescriptor
 
