@@ -6,7 +6,10 @@
  *      En este modulo implementamos las funciones para porder leer
  *      y manipular los datos en los archisovs dbf
 */
+
 #include "dbf.h"
+#include <string.h>
+
 /*
   TODO:
   * Etapa 1
@@ -29,7 +32,7 @@
 void PrintDBFDescriptorFile(stDBF_DescritorFile DBFDescriptor)
 {
 // Imprimimos el tipo de archivo
-  printf("\nel tipo de archivo es:\t");
+  printf("\nEl tipo de archivo es:\t");
 
   switch(DBFDescriptor.DBFType)
   {
@@ -47,13 +50,12 @@ void PrintDBFDescriptorFile(stDBF_DescritorFile DBFDescriptor)
     case 0xE5:   printf("HiPer-Six format with SMT memo file               "); break;
     case 0xFB:   printf("FoxBASE                                           "); break;
   }
-  printf("\nLa fecha de la ultima actualizacione es:\t %d/%d/%d",DBFDescriptor.lastUpdate[2] ,DBFDescriptor.lastUpdate[1] ,DBFDescriptor.lastUpdate[0] );
-  printf("\nCantidad de registros:\t%d", DBFDescriptor.NumberRecords);
-  printf("\nOffset del primer dato:\t%d", DBFDescriptor.PostFisrtDataRecord);
-  printf("\nlongitud del registro de dato:\t%d", DBFDescriptor.LengthDataRecord);
-
-  printf("\nFlag de la tabla:\t%x", DBFDescriptor.TableFlag);
-  printf("\nMarca dle codigo de pagina:\t%x", DBFDescriptor.CodePageMark);
+  printf("\n*La fecha de la ultima actualizacione es:\t %d/%d/%d",DBFDescriptor.lastUpdate[2] ,DBFDescriptor.lastUpdate[1] ,DBFDescriptor.lastUpdate[0] );
+  printf("\n*Cantidad de registros:\t%d", DBFDescriptor.NumberRecords);
+  printf("\n*Offset del primer dato:\t%d", DBFDescriptor.PostFisrtDataRecord);
+  printf("\n*longitud del registro de dato:\t%d", DBFDescriptor.LengthDataRecord);
+  printf("\n*Flag de la tabla:\t%x", DBFDescriptor.TableFlag);
+  printf("\n*Marca dle codigo de pagina:\t%x", DBFDescriptor.CodePageMark);
 
 
 
@@ -90,39 +92,39 @@ char* GetFieldTypeDescription(char FieldType)
 void PrintSubRecordInfo(stDBFSubRecord Subrecord)
 {
   printf("\nNombre del campo:\t%s",Subrecord.FieldName);
-  printf("\n\tTipo de datos del campo:\t%c",Subrecord.FileType);
-    printf(" Descricion: %s",GetFieldTypeDescription(Subrecord.FileType) );
+  printf("\n\t-Tipo de datos del campo:\t%c",Subrecord.FileType);
+  printf("\n\t-Descricion: %s",GetFieldTypeDescription(Subrecord.FileType) );
 
-  printf("\n\tDisplacement:\t%x.%x.%x.%x",Subrecord.Displacemente[0],Subrecord.Displacemente[1],Subrecord.Displacemente[2],Subrecord.Displacemente[3]);
-  printf("\n\tLongitus del campo en byte:\t%d",Subrecord.LengthFiel);
-  printf("\n\tCantidad decimales:\t%d",Subrecord.NumberDecimal);
-  printf("\n\tFlag:\t%x",Subrecord.FileFlags );
+  printf("\n\t-Displacement:\t%x.%x.%x.%x",Subrecord.Displacemente[0],Subrecord.Displacemente[1],Subrecord.Displacemente[2],Subrecord.Displacemente[3]);
+  printf("\n\t-Longitus del campo en byte:\t%d",Subrecord.LengthFiel);
+  printf("\n\t-Cantidad decimales:\t%d",Subrecord.NumberDecimal);
+  printf("\n\t-Flag:\t%x",Subrecord.FileFlags );
 
-  printf("\n\tValor del proximo:\t%x-%x-%x-%x",Subrecord.ValueAutNextValue[0],Subrecord.ValueAutNextValue[1],Subrecord.ValueAutNextValue[2],Subrecord.ValueAutNextValue[3] );
-  printf("\n\tPaso de incre:\t%x",Subrecord.AutoIncStep );
+  printf("\n\t-Valor del proximo:\t%x-%x-%x-%x",Subrecord.ValueAutNextValue[0],Subrecord.ValueAutNextValue[1],Subrecord.ValueAutNextValue[2],Subrecord.ValueAutNextValue[3] );
+  printf("\n\t-Paso de incre:\t%x",Subrecord.AutoIncStep );
 }
 
 /*
-  Abrimos el archivo y carmos la informacion necesaria para realizar las operaciones que se nos pidan
-  dentro del archivo y luego poder cerarlo cuanod ya no se use mas (analizar co cuidado que memoria y
+  Abrimos el archivo y cargamos la informacion necesaria para realizar las operaciones que se nos pidan
+  dentro del archivo y luego poder cerarlo cuando ya no se use mas (analizar con cuidado uso de memoria y
   cuando liberarla.
   Al abrir un archivo debo generar un resumen de la informacion del mismo para realizar todas las operaciones
   El problema es que debo tener en memoria el formato de cada campo para interpretarlos cuando pidan
   informacion de o los registros.
-  Segun como salio todo retornamos un codigo de error para saber como salio todo.
+  Segun como salio todo retornamos un codigo de error o salio todo.
   * 0 Si todo sale bien
   * -1 si se quedo sin memoria.
 */
 char DBFOpen(stDescriptor* Descriptor, char* Nombre)
 {
-  FILE * pFile;
-  int i, NumeroCeldas;
-  long  lSize,
-        LRegisterSize;    // LRegisterSize es el tamano de cada registro(entrada) de la tabla.
-  char * buffer, *RegisterBuf ;
+  //FILE * pFile;
+  //int i, NumeroCeldas;
+  long  lSize;//,
+        //LRegisterSize;    // LRegisterSize es el tamano de cada registro(entrada) de la tabla.
+  char * buffer;//, *RegisterBuf ;
   size_t result;
   stDBF_DescritorFile DBFBuf;
-  stDBFSubRecord *ptrSubrecord;
+  //stDBFSubRecord *ptrSubrecord;
 
 /*
   iniicilaizo los datos de la estructura pero tambien debo deteccta si fu usada antes para no
@@ -172,7 +174,7 @@ char DBFOpen(stDescriptor* Descriptor, char* Nombre)
 
   // Reservo memoria para leer la descripcion de los subregistros.
   result = fread (buffer,lSize,1,  Descriptor->fp);
-  ptrSubrecord = (stDBFSubRecord*)buffer;
+  //ptrSubrecord = (stDBFSubRecord*)buffer; vieja metodo
   Descriptor->ptTCedasRegistro = (stDBFSubRecord*)buffer;
 }
 
@@ -183,17 +185,17 @@ char DBFOpen(stDescriptor* Descriptor, char* Nombre)
 }
 
 /**
- * @brief 
+ * @brief
  *       Para poder leer un registro tengo que tener el largo del registro, esto lo obtrengo de la estructura del
  *       archivo que me da el largo de cada registro, luego necesito la posicicon done empieza el regirto, lo que
  *       es facil ya que es N veces el tamano mas el offset de arranque de la seccion delntro del archivo.
- * @param Index 
+ * @param Index
  *  Numero de resguidstro de deseamos leer.
- * @param Descriptor 
+ * @param Descriptor
  *  Puntero al descripto utilizado para llevar la informacion del archivo leido.
- * @param RegisterBuf 
+ * @param RegisterBuf
  *  Puntero al buffer donde se guardaran los datos leidos.
- * @return char 
+ * @return char
  */
 
 char ReadRecordByNum(unsigned int Index, stDescriptor* Descriptor, char** RegisterBuf)
@@ -220,34 +222,34 @@ char ReadRecordByNum(unsigned int Index, stDescriptor* Descriptor, char** Regist
 
 
 /**
- * @brief Esta fucnion nos permite leer varios registros de una vez 
- * a fucnion retorna la cantidad de registros que pudo leer, si o pudo leer ningun registro retorna 0 
+ * @brief Esta fucnion nos permite leer varios registros de una vez
+ * a fucnion retorna la cantidad de registros que pudo leer, si o pudo leer ningun registro retorna 0
  * y en caso que se produsca un error retorna numeros negativos.
- * 
+ *
  */
 
 char ReadRecordRange(unsigned int StartIdx, unsigned int EndIdx, stDescriptor* Descriptor, char** RegisterBuf)
 {
   size_t result;
   unsigned int FileOffset, BufferSize;
-  //Primer debemos validar el rango solicitado ya sea que no esten cruzados como que esten dnentro de la cantidad 
+  //Primer debemos validar el rango solicitado ya sea que no esten cruzados como que esten dnentro de la cantidad
   // de registros gaurdados
-  if(StartIdx <= EndIdx)  
+  if(StartIdx <= EndIdx)
     return -1;                            // Rango invalido
-  if(RegisterBuf == NULL)  
+  if(RegisterBuf == NULL)
     return -4;                           // Destino invalido
  // TODO Validar con a cantidad de reistros almacenados.
   // Posiciono el filepointer donde comienzan los datos
   FileOffset = Descriptor->CominzoDatos + (StartIdx * sizeof(char)*(Descriptor->LongitudRegistro)) ;
   fseek(Descriptor->fp, FileOffset, SEEK_SET);                  // posciono el puntero del archivo en el registro que deseo leer
   BufferSize = sizeof(char)*(Descriptor->LongitudRegistro);     // Calculo cuanta memoria voy a necesitar para guardar los datos que pidio leer
- 
+
   *RegisterBuf = (char*) malloc ( BufferSize);
-  if (RegisterBuf == NULL) 
+  if (RegisterBuf == NULL)
     return (-3);
 
   result = fread (*RegisterBuf ,1,Descriptor->LongitudRegistro, Descriptor->fp);
-  if (result != Descriptor->LongitudRegistro) 
+  if (result != Descriptor->LongitudRegistro)
     return(-2);
  return(0);
 

@@ -1,12 +1,16 @@
 /*
- *
+ *  Fecha: //2022
  *  Autor: Gabriel Vasquez H.
  *  Objetivo:
  *    Este projecto nace a raiz de una nececida en mi trabajo de poder trabajar con
- *    sitemas que tiene esta base de datos en maquinas viejas de pocos recursos.
- *    A si que mientras desarrollo una herramienta, me parecio poder hacer algo
- *    sensillo para no olvidarme la estructura y dejar para que otros vena un ejemplo
- *
+ *    sitemas que tienen esta base de datos en maquinas viejas de pocos recursos.
+ *    A si que mientras desarrollo una herramienta para poder extraer y recuperar los
+ *    datos, me parecio uutil poder hacer un ejemplo simple para no olvidarme
+ *    la estructura y dejarlo para que otros puedan seguir con un ejeplo modificable
+ *    sin tener que empezar de cero.
+ *  data ana mary
+ *  27959636422
+ *  Anariky2022
  *
 */
 
@@ -18,14 +22,14 @@
 #define MULTIPLO  10
 #define NEW       1
 
-int main()
+int main(int argCnt, char** Arg )
 {
 //  FILE *fp;
   FILE * pFile;
   int i, NumeroCeldas;
   long  lSize,
         LRegisterSize;    // LRegisterSize es el tamano de cada registro(entrada) de la tabla.
-  char * buffer, *RegisterBuf ;
+  char * bu0ffer, *RegisterBuf ;
   size_t result;
   stDBF_DescritorFile DBFBuf;
   stDBFSubRecord *ptrSubrecord;
@@ -95,7 +99,7 @@ int main()
 //    LRegisterSize += ptrSubrecord[i].LengthFiel; // utilizo para contar el tamano total de cada entrada de la tabla
   }
   /* the whole file is now loaded in the memory buffer. */
-  //PrintDBFDescriptorFile(DBFBuf);
+  PrintDBFDescriptorFile(DBFBuf);
   PrintDBFDescriptorFile( Descriptor.Descriptor );
   printf("\n Longitud de cada registro(calc sum) es:%d",(int)LRegisterSize);
   printf("\n descripcion de cada celda del registro:");
@@ -127,7 +131,7 @@ int main()
   if (result != LRegisterSize*MULTIPLO) {fputs ("Reading error",stderr); exit (2);}
 */
   if(ReadRecordByNum(1, &Descriptor, &RegisterBuf) )
-  { exit (3);} // ndebe ser un switch
+  { exit (3);} // debe ser un switch
 
 
 
