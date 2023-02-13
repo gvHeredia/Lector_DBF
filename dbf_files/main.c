@@ -1,5 +1,5 @@
 /*
- *  Fecha: //2022
+ *  Fecha: 7/6/2022
  *  Autor: Gabriel Vasquez H.
  *  Objetivo:
  *    Este projecto nace a raiz de una nececida en mi trabajo de poder trabajar con
@@ -8,7 +8,7 @@
  *    datos, me parecio uutil poder hacer un ejemplo simple para no olvidarme
  *    la estructura y dejarlo para que otros puedan seguir con un ejeplo modificable
  *    sin tener que empezar de cero.
- *  data ana mary
+ *  Datos de Ana mary
  *  27959636422
  *  Anariky2022
  *
@@ -35,16 +35,6 @@ int main(int argCnt, char** Arg )
   stDBFSubRecord *ptrSubrecord;
 
   stDescriptor Descriptor;
-
-/*
-  pFile = fopen ("STOCK.DBF"  , "rb" );
-  if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
-
-  // Obtenemos el tamano del archivo.
-  fseek (pFile , 0 , SEEK_END);
-  lSize = ftell (pFile);
-  rewind (pFile);
-*/
 
   if (DBFOpen(&Descriptor, "STOCK.DBF") != 0) {
     fputs ("File error",stderr); exit (1);
@@ -130,10 +120,8 @@ int main(int argCnt, char** Arg )
   result = fread (RegisterBuf ,1,LRegisterSize*MULTIPLO, pFile);
   if (result != LRegisterSize*MULTIPLO) {fputs ("Reading error",stderr); exit (2);}
 */
-  if(ReadRecordByNum(1, &Descriptor, &RegisterBuf) )
+  if(ReadRecordByNum(4, &Descriptor, &RegisterBuf) )
   { exit (3);} // debe ser un switch
-
-
 
   printf("\n0 1 2 3 4 5 6 7 8 9 A B C D E F\n");
 //  for(i=0;i<LRegisterSize*MULTIPLO;i++ ){
@@ -147,14 +135,9 @@ int main(int argCnt, char** Arg )
       printf("\n0 1 2 3 4 5 6 7 8 9 A B C D E F\n");
     }
   }
+
   free(RegisterBuf);
-/*
   // ya termien entonces libero la memoria que pedi.
-  fclose (pFile);
-  free (buffer); // Liberamos la memoria
-  free(RegisterBuf);
-  //fclose(fp);
-*/
   DBFClose(Descriptor);
 
 

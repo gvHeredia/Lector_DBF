@@ -14,9 +14,13 @@
   TODO:
   * Etapa 1
       -[ ] Funcion que me de la cantidad total de resgistros
+      -[ ] Agregar funciones que me permitar leer un rango de registros de una vez.
+      -[ ] Imprimir los datos del registro completo con la descripcion de cada campo.
       -[x] Agregar funciones que me permitar leer de a un registro a la vez
       -[x] Leer de a un registro por vez en cualquier posicion, pero indexado.
       -[x] Imprimir los datos del registro completo.
+      -[ ] Limpiar variables.
+
   * Etapa 2
       -[] Crear exportacion a un archivo cvs.
       -[] Crear archivo para crear la misma tabla en sql.
@@ -201,11 +205,13 @@ char DBFOpen(stDescriptor* Descriptor, char* Nombre)
 char ReadRecordByNum(unsigned int Index, stDescriptor* Descriptor, char** RegisterBuf)
 {
   size_t result;
-  // Posiciono el filepointer donde comienzan los datos
+// Posiciono el file pointer donde comienzan los datos
 //  fseek(pFile, DBFBuf.PostFisrtDataRecord, SEEK_SET);
 // TODO:  Falta hacer todas las validacione.
 
-  fseek(Descriptor->fp, Descriptor->CominzoDatos, SEEK_SET);
+// Posicionamos el puntero en el lugar donde queremos empeazr a leer 
+// Esto es: Comienzo de datos+N*Tamano del bloques
+  fseek(Descriptor->fp, Descriptor->CominzoDatos+(Index*Descriptor->LongitudRegistro), SEEK_SET);
 
   //RegisterBuf = (char*) malloc (sizeof(char)*LRegisterSize*MULTIPLO);
   *RegisterBuf = (char*) malloc (sizeof(char)*(Descriptor->LongitudRegistro));
@@ -223,8 +229,13 @@ char ReadRecordByNum(unsigned int Index, stDescriptor* Descriptor, char** Regist
 
 /**
  * @brief Esta fucnion nos permite leer varios registros de una vez
- * a fucnion retorna la cantidad de registros que pudo leer, si o pudo leer ningun registro retorna 0
- * y en caso que se produsca un error retorna numeros negativos.
+ * la fucnion retorna la cantidad de registros que pudo leer, sino 
+ * pudo leer ningun registro retorna 0
+ * y en caso que se produzca un error retorna numeros negativos.
+ * 
+ * Nota: est funcion podria llamar a la funcion de lectora por registro
+ * pero si se hace la lectura del archivo implemtando la funcion 
+ * sera mucho mas rapido.
  *
  */
 
@@ -242,7 +253,7 @@ char ReadRecordRange(unsigned int StartIdx, unsigned int EndIdx, stDescriptor* D
   // Posiciono el filepointer donde comienzan los datos
   FileOffset = Descriptor->CominzoDatos + (StartIdx * sizeof(char)*(Descriptor->LongitudRegistro)) ;
   fseek(Descriptor->fp, FileOffset, SEEK_SET);                  // posciono el puntero del archivo en el registro que deseo leer
-  BufferSize = sizeof(char)*(Descriptor->LongitudRegistro);     // Calculo cuanta memoria voy a necesitar para guardar los datos que pidio leer
+  BufferSize = (EndIdx-StartIdx)*sizeof(char)*(Descriptor->LongitudRegistro);     // Calculo cuanta memoria voy a necesitar para guardar los datos que pidio leer
 
   *RegisterBuf = (char*) malloc ( BufferSize);
   if (RegisterBuf == NULL)

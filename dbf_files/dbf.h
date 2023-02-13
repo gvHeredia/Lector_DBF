@@ -88,7 +88,7 @@ Si el formato en dBaseIII tiene los iguientes limites
 
 /*
   La etrucura stDBF_DescritorFile nos da la informacion
-  general del a1rchivo para poder leerlo,
+  general del archivo para poder leerlo,
 */
 typedef struct{
   unsigned char DBFType; // 1 byte
@@ -126,6 +126,8 @@ typedef struct {
 
 /*
   Esta estructura es de uso interno y simplifica el tener muchas variables colgadas
+  El proposito de esta estructura es tener todo lo necesario para poder obtener todos 
+  los datos del archivo y poder hacer las consultas que sean necesarias.
 */
 typedef struct{
   FILE *fp;                       // Puntero al archivo abierto.
