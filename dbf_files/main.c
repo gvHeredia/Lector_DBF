@@ -71,7 +71,7 @@ int main(int argCnt, char** Arg )
   }
   // the whole file is now loaded in the memory buffer.
   PrintDBFDescriptorFile(DBFBuf);
-  printf("\n Longitud de cada registro(calc sum) es:%d",(int)LRegisterSize);
+k  printf("\n Longitud de cada registro(calc sum) es:%d",(int)LRegisterSize);
   printf("\n descripcion de cada celda del registro:");
 
 */

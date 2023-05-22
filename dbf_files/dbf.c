@@ -26,13 +26,18 @@
       -[] Crear archivo para crear la misma tabla en sql.
       -[] Crear arcivo que genere la injeccion de los datos en SQL(Ojo con los tamanos).
 */
-// Declaracionde  variables locales al modulo
 
-// stDescriptor
+
 
 
 
 //La funcion PrintDBFDescriptorFile imprime los capos del encabezado del archivo para informarlos**/
+/**
+ * @brief 
+ * Imprime la descripcion de cada campo y su definicion, esto se obtiee de la primera parte del archivo
+ * esta descricion es de cada campo que forman el registro de la tabla. 
+ * @param DBFDescriptor 
+ */
 void PrintDBFDescriptorFile(stDBF_DescritorFile DBFDescriptor)
 {
 // Imprimimos el tipo de archivo
